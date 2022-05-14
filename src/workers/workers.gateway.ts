@@ -34,4 +34,9 @@ export class WorkersGateway
   handleDisconnectWork(client: any, payload: any): void {
     console.log(payload)
   }
+
+  @SubscribeMessage('out_perimeter')
+  handleOtPerimeter(client: any, payload: any): void {
+    console.log(payload)
+  }
 }
