@@ -6,7 +6,7 @@ import {
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
 
-@WebSocketGateway(80, {
+@WebSocketGateway( {
   cors: { origin: '*' },
 })
 export class WorkersGateway
