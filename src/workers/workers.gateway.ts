@@ -39,4 +39,9 @@ export class WorkersGateway
   handleOtPerimeter(client: any, payload: any): void {
     console.log(payload)
   }
+
+  @SubscribeMessage('out_perimeter')
+  handleOtMessageTest(client: any, payload: any): void {
+    console.log(payload)
+  }
 }
