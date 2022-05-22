@@ -2,6 +2,9 @@ import { Module, Global } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+const fs = require('fs')
+const path = require('path')
+
 import config from '../config';
 
 @Global()
@@ -12,21 +15,17 @@ import config from '../config';
       useFactory: (configService: ConfigType<typeof config>) => {
         const { dbName, host, user, password, port } = configService.mysql;
 
-        let sslConfig = {};
+        let certificate = {};
 
         if (process.env.NODE_ENV === 'production') {
-          sslConfig = {
-            ssl: true,
-            extra: {
-              ssl: {
-                rejectUnauthorized: false,
-              },
-            },
-          };
+          certificate = {
+            ca: fs.readFileSync(path.resolve('./src/ca-certificate.crt'))
+          }
         }
 
+
         return {
-          type: 'postgres',
+          type: 'mysql',
           host,
           port,
           database: dbName,
@@ -34,7 +33,7 @@ import config from '../config';
           password,
           autoLoadEntities: true,
           synchronize: false,
-          ...sslConfig,
+          ...certificate
         };
       },
     }),
