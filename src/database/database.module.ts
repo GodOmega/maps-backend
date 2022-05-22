@@ -1,9 +1,9 @@
 import { Module, Global } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import fs from 'fs';
 
 import config from '../config';
-
 
 @Global()
 @Module({
@@ -11,18 +11,18 @@ import config from '../config';
     TypeOrmModule.forRootAsync({
       inject: [config.KEY],
       useFactory: (configService: ConfigType<typeof config>) => {
-        const { dbName, host, user, password, port, sslCA, sslMode } = configService.mysql;
-        
+        const { dbName, host, user, password, port, sslCA, sslMode } =
+          configService.mysql;
+
         let ssl = null;
 
-        if(sslMode){
-          console.log('ssl mode')
+        if (sslMode) {
+          console.log('ssl mode');
           ssl = {
-            ca: sslCA
-          }
+            ca: fs.readFileSync('../ca-certificate.crt').toString(),
+          };
         }
 
-        
         return {
           type: 'mysql',
           host,
@@ -32,7 +32,7 @@ import config from '../config';
           password,
           autoLoadEntities: true,
           synchronize: false,
-          ssl
+          ssl,
         };
       },
     }),
