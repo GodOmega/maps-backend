@@ -20,8 +20,8 @@ export class Enterprise {
   @Column({ type: 'varchar', unique: true })
   name: string;
 
-  @Column({ type: 'text', nullable: true })
-  coords: string;
+  @Column({ name: 'user_id' })
+  userId: number;
 
   @ManyToOne(() => User, (user) => user.enterprises)
   @JoinColumn({ name: 'user_id' })

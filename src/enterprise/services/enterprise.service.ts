@@ -4,7 +4,10 @@ import { Repository } from 'typeorm';
 
 import { Enterprise } from '../entities/enterprise.entity';
 import { EnterpriseGroup } from '../entities/enterpriseGroup.entity';
-import { UpdateEnterpriseDto } from '../dtos/enterprise.dto';
+import {
+  CreateEnterpriseDto,
+  UpdateEnterpriseDto,
+} from '../dtos/enterprise.dto';
 
 @Injectable()
 export class EnterpriseService {
@@ -23,6 +26,11 @@ export class EnterpriseService {
     }
 
     return enterprise;
+  }
+
+  create(data: CreateEnterpriseDto) {
+    const enterprise = this.enterpriseRepo.create(data);
+    return this.enterpriseRepo.save(enterprise);
   }
 
   async update(id: number, changes: UpdateEnterpriseDto) {

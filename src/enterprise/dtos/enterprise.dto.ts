@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator';
+import { IsString, IsNumber } from 'class-validator';
 import { PartialType, ApiProperty } from '@nestjs/swagger';
 
 export class CreateEnterpriseDto {
@@ -6,9 +6,9 @@ export class CreateEnterpriseDto {
   @ApiProperty()
   readonly name: string;
 
-  @IsString()
+  @IsNumber()
   @ApiProperty()
-  readonly coords: string;
+  readonly userId: number;
 }
 
 export class UpdateEnterpriseDto extends PartialType(CreateEnterpriseDto) {}

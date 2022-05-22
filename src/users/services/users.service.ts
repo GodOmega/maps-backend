@@ -11,6 +11,10 @@ import { CreateUserDto } from '../dtos/users.dto';
 export class UsersService {
   constructor(@InjectRepository(User) private userRepo: Repository<User>) {}
 
+  findAll() {
+    return this.userRepo.find();
+  }
+
   findByEmail(email: string) {
     return this.userRepo
       .createQueryBuilder('user')

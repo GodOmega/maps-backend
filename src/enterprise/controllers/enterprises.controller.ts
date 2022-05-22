@@ -4,11 +4,12 @@ import {
   Param,
   ParseIntPipe,
   Put,
+  Post,
   Body,
   UseGuards,
 } from '@nestjs/common';
 
-import { UpdateEnterpriseDto } from '../dtos/enterprise.dto';
+import { CreateEnterpriseDto, UpdateEnterpriseDto } from '../dtos/enterprise.dto';
 import { EnterpriseService } from '../services/enterprise.service';
 
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
@@ -23,10 +24,16 @@ export class EnterprisesController {
   constructor(private enterpriseService: EnterpriseService) {}
 
   // @Roles(Role.ADMIN)
-  // @Public()
+  @Public()
   @Get(':id')
   getEnterprise(@Param('id', ParseIntPipe) enterpriseId: number) {
     return this.enterpriseService.findOne(enterpriseId);
+  }
+
+  @Public()
+  @Post()
+  createEnterprise(@Body() payload: CreateEnterpriseDto) {
+    return this.enterpriseService.create(payload);
   }
 
   @Put(':id')

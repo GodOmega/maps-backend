@@ -2,8 +2,8 @@ import { Module, Global } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-const fs = require('fs')
-const path = require('path')
+const fs = require('fs');
+const path = require('path');
 
 import config from '../config';
 
@@ -19,10 +19,9 @@ import config from '../config';
 
         if (process.env.NODE_ENV === 'production') {
           certificate = {
-            ca: fs.readFileSync(path.resolve('./src/ca-certificate.crt'))
-          }
+            ca: fs.readFileSync(path.resolve('./src/ca-certificate.crt')),
+          };
         }
-
 
         return {
           type: 'mysql',
@@ -33,7 +32,7 @@ import config from '../config';
           password,
           autoLoadEntities: true,
           synchronize: false,
-          ...certificate
+          ...certificate,
         };
       },
     }),

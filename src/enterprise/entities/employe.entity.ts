@@ -32,6 +32,9 @@ export class Employe {
   @JoinColumn({ name: 'enterprises_id' })
   enterprise: Enterprise;
 
+  @Column({ name: 'users_id' })
+  userId: number;
+
   @OneToOne(() => User, (user) => user.employe, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'users_id' })
   user: User;

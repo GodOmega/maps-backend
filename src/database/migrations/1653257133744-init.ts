@@ -1,13 +1,13 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class init1653180624988 implements MigrationInterface {
-    name = 'init1653180624988'
+export class init1653257133744 implements MigrationInterface {
+    name = 'init1653257133744'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TABLE \`users\` (\`id\` int NOT NULL AUTO_INCREMENT, \`username\` varchar(255) NOT NULL, \`email\` varchar(255) NOT NULL, \`name\` varchar(255) NOT NULL, \`lastname\` varchar(255) NOT NULL, \`password\` varchar(255) NOT NULL, \`gender\` enum ('M', 'F', 'O') NOT NULL, \`role\` varchar(100) NOT NULL, \`image\` text NULL, \`created_at\` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), \`updated_at\` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6), UNIQUE INDEX \`IDX_fe0bb3f6520ee0469504521e71\` (\`username\`), UNIQUE INDEX \`IDX_97672ac88f789774dd47f7c8be\` (\`email\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
-        await queryRunner.query(`CREATE TABLE \`enterprise_groups\` (\`id\` int NOT NULL AUTO_INCREMENT, \`name\` varchar(255) NOT NULL, \`perimeter\` text NULL, \`enterprises_id\` int NULL, PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
-        await queryRunner.query(`CREATE TABLE \`enterprises\` (\`id\` int NOT NULL AUTO_INCREMENT, \`name\` varchar(255) NOT NULL, \`coords\` text NULL, \`user_id\` int NULL, UNIQUE INDEX \`IDX_f4c58d077b4dbb4a025bf94aee\` (\`name\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
-        await queryRunner.query(`CREATE TABLE \`employes\` (\`id\` int NOT NULL AUTO_INCREMENT, \`role\` enum ('worker', 'onwer') NOT NULL DEFAULT 'worker', \`enterprises_id\` int NOT NULL, \`users_id\` int NULL, \`enterprise_group_id\` int NULL, UNIQUE INDEX \`REL_94a37068ba44def928303a5c54\` (\`users_id\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
+        await queryRunner.query(`CREATE TABLE \`enterprise_groups\` (\`id\` int NOT NULL AUTO_INCREMENT, \`name\` varchar(255) NOT NULL, \`perimeter\` text NULL, \`enterprises_id\` int NOT NULL, PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
+        await queryRunner.query(`CREATE TABLE \`enterprises\` (\`id\` int NOT NULL AUTO_INCREMENT, \`name\` varchar(255) NOT NULL, \`user_id\` int NOT NULL, UNIQUE INDEX \`IDX_f4c58d077b4dbb4a025bf94aee\` (\`name\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
+        await queryRunner.query(`CREATE TABLE \`employes\` (\`id\` int NOT NULL AUTO_INCREMENT, \`role\` enum ('worker', 'onwer') NOT NULL DEFAULT 'worker', \`enterprises_id\` int NOT NULL, \`users_id\` int NOT NULL, \`enterprise_group_id\` int NULL, UNIQUE INDEX \`REL_94a37068ba44def928303a5c54\` (\`users_id\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
         await queryRunner.query(`CREATE TABLE \`employes_time\` (\`id\` int NOT NULL AUTO_INCREMENT, \`client_id\` varchar(255) NOT NULL, \`status\` enum ('online', 'offline') NOT NULL DEFAULT 'online', \`time\` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), \`employe_id\` int NULL, PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
         await queryRunner.query(`ALTER TABLE \`enterprise_groups\` ADD CONSTRAINT \`FK_e1f47dc42417c508c33a96aae45\` FOREIGN KEY (\`enterprises_id\`) REFERENCES \`enterprises\`(\`id\`) ON DELETE CASCADE ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE \`enterprises\` ADD CONSTRAINT \`FK_dbc5f5e35202deeb7486ecf5941\` FOREIGN KEY (\`user_id\`) REFERENCES \`users\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`);
