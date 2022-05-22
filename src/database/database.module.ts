@@ -10,9 +10,7 @@ import config from '../config';
     TypeOrmModule.forRootAsync({
       inject: [config.KEY],
       useFactory: (configService: ConfigType<typeof config>) => {
-        const {dbUrl, dbType} = configService
-        const { dbName, host, user, password, port, } =
-          configService.mysql;
+        const { dbName, host, user, password, port } = configService.mysql;
 
         let sslConfig = {};
 
@@ -28,7 +26,7 @@ import config from '../config';
         }
 
         return {
-          type: 'mysql',
+          type: 'postgres',
           host,
           port,
           database: dbName,

@@ -23,6 +23,7 @@ import config from './config';
         MYSQL_HOST: joi.string().required(),
         MYSQL_USER: joi.string().required(),
         AUTH_JWT_SECRET: joi.string().required(),
+        DB_TYPE: joi.string().required(),
       }),
     }),
     DatabaseModule,

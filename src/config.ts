@@ -9,8 +9,7 @@ export default registerAs('config', () => {
       user: process.env.MYSQL_USER,
       host: process.env.MYSQL_HOST || 'localhost',
     },
-    dbUrl: process.env.DB_URL,
-    dbType: process.env.TYPEORM_CONNECTION,
+    dbType: process.env.DB_TYPE || 'mysql',
     authJwtSecret: process.env.AUTH_JWT_SECRET
   };
 });
