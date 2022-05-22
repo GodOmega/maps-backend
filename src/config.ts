@@ -8,9 +8,9 @@ export default registerAs('config', () => {
       password: process.env.MYSQL_PASSWORD,
       user: process.env.MYSQL_USER,
       host: process.env.MYSQL_HOST || 'localhost',
-      sslCA: process.env.MYSQL_SSL_CERTIFICATE,
-      sslMode: process.env.SSL_MODE || false,
     },
+    dbUrl: process.env.DB_URL,
+    dbType: process.env.TYPEORM_CONNECTION,
     authJwtSecret: process.env.AUTH_JWT_SECRET
   };
 });
