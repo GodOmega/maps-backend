@@ -9,7 +9,10 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { CreateEnterpriseDto, UpdateEnterpriseDto } from '../dtos/enterprise.dto';
+import {
+  CreateEnterpriseDto,
+  UpdateEnterpriseDto,
+} from '../dtos/enterprise.dto';
 import { EnterpriseService } from '../services/enterprise.service';
 
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
@@ -18,19 +21,19 @@ import { Public } from '../../auth/decorators/public.decorator';
 import { Roles } from '../../auth/decorators/roles.decorator';
 import { Role } from '../../auth/models/roles.model';
 
-@UseGuards(JwtAuthGuard, RolesGuard)
+// @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('enterprises')
 export class EnterprisesController {
   constructor(private enterpriseService: EnterpriseService) {}
 
   // @Roles(Role.ADMIN)
-  @Public()
+  // @Public()
   @Get(':id')
   getEnterprise(@Param('id', ParseIntPipe) enterpriseId: number) {
     return this.enterpriseService.findOne(enterpriseId);
   }
 
-  @Public()
+  // @Public()
   @Post()
   createEnterprise(@Body() payload: CreateEnterpriseDto) {
     return this.enterpriseService.create(payload);
@@ -42,19 +45,5 @@ export class EnterprisesController {
     @Body() payload: UpdateEnterpriseDto,
   ) {
     return this.enterpriseService.update(enterpriseId, payload);
-  }
-
-  @Get('/groups/:id')
-  getEnterpriseGroup(@Param('id', ParseIntPipe) groupId: number) {
-    console.log(groupId);
-    return this.enterpriseService.getGroup(groupId);
-  }
-
-  @Put('/groups/:id')
-  updateGroup(
-    @Param('id', ParseIntPipe) groupId: number,
-    @Body() payload: any,
-  ) {
-    return this.enterpriseService.updateGroup(groupId, payload);
   }
 }

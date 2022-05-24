@@ -14,7 +14,7 @@ import { Employe } from '../../enterprise/entities/employe.entity';
 import { Enterprise } from 'src/enterprise/entities/enterprise.entity';
 
 // TYPES
-import { GENDER } from '../models/user.models';
+import { USER_GENDER, USER_ROLE } from '../models/user.models';
 
 @Entity({ name: 'users' })
 export class User {
@@ -39,12 +39,16 @@ export class User {
 
   @Column({
     type: 'enum',
-    enum: GENDER,
+    enum: USER_GENDER,
   })
-  gender: GENDER;
+  gender: USER_GENDER;
 
-  @Column({ type: 'varchar', length: 100 })
-  role: string;
+  @Column({
+    type: 'enum',
+    default: USER_ROLE.WORKER,
+    enum: USER_ROLE,
+  })
+  role: USER_ROLE;
 
   @Column({ type: 'text', nullable: true })
   image: string;

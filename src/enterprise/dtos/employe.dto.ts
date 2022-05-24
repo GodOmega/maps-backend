@@ -1,5 +1,31 @@
-import { IsString, IsNumber } from 'class-validator';
+import { IsString, IsNumber, IsOptional } from 'class-validator';
 import { PartialType, ApiProperty } from '@nestjs/swagger';
+
+
+import { EmployeRole } from '../types/employe.type';
+
+
+
+export class CreateEmployeeDto {
+  @IsNumber()
+  @ApiProperty()
+  readonly enterpriseId: number;
+
+  @IsNumber()
+  @ApiProperty()
+  readonly userId: number;
+
+  @IsNumber()
+  @ApiProperty()
+  readonly enterpriseGroupId: number;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty()
+  readonly role: EmployeRole;
+}
+
+export class UpdateEmployeeDto extends PartialType(CreateEmployeeDto) {}
 
 export class CreateEmployeTimeDto {
   @IsString()
@@ -7,4 +33,8 @@ export class CreateEmployeTimeDto {
 
   @IsNumber()
   readonly employeId: number;
+
+  @IsString()
+  @IsOptional()
+  readonly role: string;
 }

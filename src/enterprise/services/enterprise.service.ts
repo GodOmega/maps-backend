@@ -39,21 +39,4 @@ export class EnterpriseService {
     this.enterpriseRepo.merge(enterprise, changes);
     return this.enterpriseRepo.save(enterprise);
   }
-
-  async getGroup(groupId: number) {
-    const group = await this.enterpriseGroupRepo.findOne(groupId);
-
-    if (!group) {
-      return new NotFoundException('Group not found');
-    }
-
-    return group;
-  }
-
-  async updateGroup(groupId: number, changes: any) {
-    const group = await this.enterpriseGroupRepo.findOne(groupId);
-
-    this.enterpriseGroupRepo.merge(group, changes);
-    return this.enterpriseGroupRepo.save(group);
-  }
 }

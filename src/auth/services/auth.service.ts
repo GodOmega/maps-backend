@@ -6,9 +6,9 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from '../../users/entities/user.entity';
 import { Repository } from 'typeorm';
 
-import { CreateUserDto } from '../../users/dtos/users.dto';
 import { UsersService } from '../../users/services/users.service';
 import { PayloadToken } from '../models/token.model';
+import { RegisterUserDto } from '../dtos/registerUser.dto';
 
 @Injectable()
 export class AuthService {
@@ -18,8 +18,9 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async registerUser(data: CreateUserDto) {
-    return await this.usersService.create(data);
+  async registerUser(data: RegisterUserDto) {
+    const user = this.userRepo.create(data);
+    return this.userRepo.save(user);
   }
 
   async validateUser(email: string, password: string) {

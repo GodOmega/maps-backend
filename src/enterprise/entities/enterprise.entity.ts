@@ -17,7 +17,7 @@ export class Enterprise {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar', unique: true })
+  @Column({ type: 'varchar'})
   name: string;
 
   @Column({ name: 'user_id' })

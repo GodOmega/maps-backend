@@ -3,15 +3,16 @@ import { Request } from 'express';
 import { AuthGuard } from '@nestjs/passport';
 
 import { AuthService } from '../services/auth.service';
-import { CreateUserDto } from '../../users/dtos/users.dto';
 import { User } from '../../users/entities/user.entity';
+
+import { RegisterUserDto } from '../dtos/registerUser.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('register')
-  registerUser(@Body() payload: CreateUserDto) {
+  registerUser(@Body() payload: RegisterUserDto) {
     return this.authService.registerUser(payload);
   }
 
