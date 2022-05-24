@@ -20,6 +20,9 @@ export class AuthService {
 
   async registerUser(data: RegisterUserDto) {
     const user = this.userRepo.create(data);
+
+    user.password = await bcrypt.hash(data.password, 10);
+
     return this.userRepo.save(user);
   }
 
