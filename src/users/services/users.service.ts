@@ -1,11 +1,19 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
 import { User } from '../entities/user.entity';
 
-import { CreateUserDto } from '../dtos/users.dto';
+import {
+  CreateUserDto,
+  UpdateUserDto,
+  UpdateByUserDto,
+} from '../dtos/users.dto';
 
 @Injectable()
 export class UsersService {
@@ -37,6 +45,57 @@ export class UsersService {
     newUser.password = hashPassword;
 
     return this.userRepo.save(newUser);
+  }
+
+  async updateByAdmin(id: number, changes: UpdateUserDto) {
+    const user = await this.userRepo.findOne(id);
+
+    if (!user) {
+      throw new NotFoundException('User not Found');
+    }
+
+    const { password } = changes;
+
+    const userData = {
+      ...changes,
+      password: user.password,
+    };
+
+    this.userRepo.merge(user, userData);
+
+    if (password) {
+      user.password = await bcrypt.hash(password, 10);
+    }
+
+    return this.userRepo.save(user);
+  }
+
+  async updateByUser(id: number, changes: UpdateByUserDto, loggedUser) {
+    const user = await this.userRepo.findOne(id);
+
+    if (!user) {
+      throw new NotFoundException('User not Found');
+    }
+
+    if (loggedUser.sub !== user.id) {
+      throw new UnauthorizedException(
+        'No estas autorizado para realizar esta accion',
+      );
+    }
+
+    const { password } = changes;
+
+    const userData = {
+      ...changes,
+      password: user.password,
+    };
+
+    this.userRepo.merge(user, userData);
+    if (password) {
+      user.password = await bcrypt.hash(password, 10);
+    }
+
+    return this.userRepo.save(user);
   }
 
   delete(id: number) {

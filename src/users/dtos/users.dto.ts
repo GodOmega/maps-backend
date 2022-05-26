@@ -37,3 +37,35 @@ export class CreateUserDto {
 }
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {}
+
+export class UpdateByUserDto {
+  @IsString()
+  @IsOptional()
+  @ApiProperty()
+  readonly username: string;
+
+  @IsEmail()
+  @IsOptional()
+  @ApiProperty()
+  readonly email: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty()
+  readonly name: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty()
+  readonly lastname: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty()
+  readonly password: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty()
+  readonly gender: USER_GENDER;
+}
