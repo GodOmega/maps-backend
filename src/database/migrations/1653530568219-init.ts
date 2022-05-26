@@ -24,6 +24,7 @@ export class init1653530568219 implements MigrationInterface {
               gender: USER_GENDER.MALE
             }),
           );
+          
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
