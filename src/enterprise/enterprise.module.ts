@@ -14,8 +14,19 @@ import { GroupsService } from './services/groups.service';
 import { EmployeesController } from './controllers/employees.controller';
 import { EmployeesService } from './services/employees.service';
 
+import { UsersModule } from 'src/users/users.module';
+
 @Module({
-  imports: [TypeOrmModule.forFeature([Enterprise, Employe, User, EmployeTime, EnterpriseGroup])],
+  imports: [
+    TypeOrmModule.forFeature([
+      Enterprise,
+      Employe,
+      User,
+      EmployeTime,
+      EnterpriseGroup,
+    ]),
+    UsersModule,
+  ],
   controllers: [EnterprisesController, GroupsController, EmployeesController],
   providers: [EnterpriseService, GroupsService, EmployeesService],
 })

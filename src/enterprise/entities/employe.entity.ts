@@ -23,19 +23,17 @@ export class Employe {
   @Column({ type: 'enum', enum: EmployeRole, default: EmployeRole.WORKER })
   role: EmployeRole;
 
-  @Column({ name: 'enterprises_id' })
+  @Column({ name: 'enterprises_id', nullable: true })
   enterpriseId: number;
 
-  @ManyToOne(() => Enterprise, (enterprise) => enterprise.employes, {
-    eager: true,
-  })
+  @ManyToOne(() => Enterprise, (enterprise) => enterprise.employes)
   @JoinColumn({ name: 'enterprises_id' })
   enterprise: Enterprise;
 
   @Column({ name: 'users_id' })
   userId: number;
 
-  @OneToOne(() => User, (user) => user.employe, { onDelete: 'CASCADE' })
+  @OneToOne(() => User, (user) => user.employe, { onDelete: 'CASCADE', eager: true })
   @JoinColumn({ name: 'users_id' })
   user: User;
 

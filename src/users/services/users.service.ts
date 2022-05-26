@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -15,13 +15,19 @@ export class UsersService {
     return this.userRepo.find();
   }
 
-  findByEmail(email: string) {
-    return this.userRepo
+  async findByEmail(email: string) {
+    const user = await this.userRepo
       .createQueryBuilder('user')
       .where('user.email = :email', { email })
       .leftJoinAndSelect('user.employe', 'employe')
       .leftJoinAndSelect('user.enterprises', 'enterprises')
       .getOne();
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user;
   }
 
   async create(data: CreateUserDto) {
@@ -31,5 +37,9 @@ export class UsersService {
     newUser.password = hashPassword;
 
     return this.userRepo.save(newUser);
+  }
+
+  delete(id: number) {
+    return this.userRepo.delete(id);
   }
 }

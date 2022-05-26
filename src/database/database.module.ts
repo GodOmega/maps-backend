@@ -7,9 +7,12 @@ const path = require('path');
 
 import config from '../config';
 
+import { UsersModule } from 'src/users/users.module';
+
 @Global()
 @Module({
   imports: [
+    UsersModule,
     TypeOrmModule.forRootAsync({
       inject: [config.KEY],
       useFactory: (configService: ConfigType<typeof config>) => {

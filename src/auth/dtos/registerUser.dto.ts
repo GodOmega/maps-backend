@@ -1,4 +1,4 @@
-import { IsString, IsEmail } from 'class-validator';
+import { IsString, IsEmail, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 
@@ -6,6 +6,7 @@ import { USER_GENDER } from 'src/users/models/user.models';
 
 export class RegisterUserDto {
   @IsString()
+  @IsOptional()
   @ApiProperty()
   readonly username: string;
 

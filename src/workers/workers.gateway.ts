@@ -5,6 +5,7 @@ import {
   OnGatewayConnection,
   OnGatewayDisconnect,
   WebSocketServer,
+  WsException,
 } from '@nestjs/websockets';
 
 import { Server, Socket } from 'socket.io';
@@ -24,62 +25,98 @@ export class WorkersGateway
 
   @WebSocketServer() server: Server;
 
-  async handleConnection(client: Socket, ...args: any[]) {
-    console.log(`${client.id} se conecto`);
-  }
+  async handleConnection(client: Socket, ...args: any[]) {}
 
   async handleDisconnect(client: Socket) {
-    console.log(`${client.id} se desconecto`);
-    // this.workerService.workerDisconnected(
-    //   params.employeId,
-    //   client.id,
-    //   'offline',
-    // );
+    try {
+      const room = await this.workerService.workerDisconnected(client.id);
+
+      if (room) {
+        const workersOnline = await this.workerService.getClientsOnline(
+          room.id,
+        );
+        this.server.to(room.id).emit('room_workers', workersOnline);
+      }
+    } catch (error) {
+      throw new WsException('Ha ocurrido un error en la conexion');
+    }
   }
 
   @SubscribeMessage('join_work')
   async handleMessage(client: Socket, payload: any) {
-    const { employeId, group, enterpriseId, name } = payload;
-    console.log('joining');
+    try {
+      const { employeId, group, enterpriseId, name, lastname } = payload;
 
-    if (group && employeId && group && enterpriseId) {
-      const roomId = `${enterpriseId}-${group}`;
-      const { room } = await this.workerService.workerConnected(
-        employeId,
-        client.id,
-        roomId,
-        name
-      );
+      if (group && employeId && group && enterpriseId) {
+        const roomId = `${enterpriseId}-${group}`;
+        const { room } = await this.workerService.workerConnected(
+          employeId,
+          client.id,
+          roomId,
+          name,
+          lastname,
+        );
 
-      this.server.to(roomId).emit("room_workers", room.workers)
+        const workersOnline = await this.workerService.getClientsOnline(roomId);
+
+        this.server.to(roomId).emit('room_workers', workersOnline);
+      }
+    } catch (error) {
+      throw new WsException('Ha ocurrido un error en la conexion');
     }
   }
 
   @SubscribeMessage('disconnect_work')
-  handleDisconnectWork(client: Socket, payload: any): void {
-    console.log(payload);
+  async handleDisconnectWork(client: Socket, payload: any) {
+    try {
+      const room = await this.workerService.workerDisconnected(client.id);
+
+      const workersOnline = await this.workerService.getClientsOnline(room.id);
+
+      this.server.to(room.id).emit('room_workers', workersOnline);
+    } catch (error) {
+      throw new WsException('Ha ocurrido un error en la conexion');
+    }
   }
 
-  @SubscribeMessage('out_perimeter')
-  handleOtPerimeter(client: Socket, payload: any): void {
-    console.log(payload);
+  @SubscribeMessage('start_lunch')
+  async handleLunch(client: Socket) {
+    try {
+      const { room } = await this.workerService.workerLunch(client.id);
+
+      const workersOnline = await this.workerService.getClientsOnline(room.id);
+      this.server.to(room.id).emit('room_workers', workersOnline);
+    } catch (error) {
+      throw new WsException('Ha ocurrido un error en la conexion');
+    }
   }
 
-  @SubscribeMessage('message')
-  handleOtMessageTest(client: any, payload: any): void {
-    console.log(payload);
+  @SubscribeMessage('stop_lunch')
+  async handleStopLunch(client: Socket) {
+    try {
+      const room = await this.workerService.workerDisconnected(client.id);
+
+      const workersOnline = await this.workerService.getClientsOnline(room.id);
+      this.server.to(room.id).emit('room_workers', workersOnline);
+    } catch (error) {
+      throw new WsException('Ha ocurrido un error en la conexion');
+    }
   }
 
   @SubscribeMessage('join_room')
   async handleJoinRoom(client: Socket, payload: any) {
-    const { enterpriseId, groupId } = payload;
+    try {
+      const { enterpriseId, groupId } = payload;
 
-    const roomId = `${enterpriseId}-${groupId}`;
+      const roomId = `${enterpriseId}-${groupId}`;
 
-    if (enterpriseId && groupId) {
-      client.join(roomId);
-      const workers = await this.workerService.getClientsOnline(roomId);
-      this.server.to(roomId).emit('room_workers', workers);
+      if (enterpriseId && groupId) {
+        client.join(roomId);
+        const workers = await this.workerService.getClientsOnline(roomId);
+        this.server.to(roomId).emit('room_workers', workers);
+      }
+    } catch (error) {
+      throw new WsException('Ha ocurrido un error en la conexion');
     }
   }
 }

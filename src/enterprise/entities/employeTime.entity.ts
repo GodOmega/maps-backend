@@ -18,7 +18,12 @@ export class EmployeTime {
   @Column({ type: 'varchar', name: 'client_id' })
   clientId: string;
 
-  @ManyToOne(() => Employe, (employe) => employe.employeTimes)
+  @Column({ type: 'text' })
+  uuid: string;
+
+  @ManyToOne(() => Employe, (employe) => employe.employeTimes, {
+    onDelete: 'CASCADE'
+  })
   @JoinColumn({ name: 'employe_id' })
   employe: Employe;
 

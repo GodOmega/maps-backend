@@ -38,3 +38,13 @@ export class CreateEmployeTimeDto {
   @IsOptional()
   readonly role: string;
 }
+
+export class GetEmployeeTime {
+  @IsString()
+  @ApiProperty()
+  readonly email: string;
+
+  @IsNumber()
+  @ApiProperty()
+  readonly enterpriseId: number;
+}

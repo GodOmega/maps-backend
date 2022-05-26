@@ -12,3 +12,9 @@ export class CreateEnterpriseDto {
 }
 
 export class UpdateEnterpriseDto extends PartialType(CreateEnterpriseDto) {}
+
+export class FilterEnterpriseDto {
+  @IsString()
+  @ApiProperty()
+  readonly name: string;
+}

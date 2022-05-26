@@ -17,13 +17,15 @@ export class Enterprise {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar'})
+  @Column({ type: 'varchar' })
   name: string;
 
   @Column({ name: 'user_id' })
   userId: number;
 
-  @ManyToOne(() => User, (user) => user.enterprises)
+  @ManyToOne(() => User, (user) => user.enterprises, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'user_id' })
   user: User;
 

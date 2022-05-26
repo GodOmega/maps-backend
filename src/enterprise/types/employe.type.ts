@@ -6,4 +6,6 @@ export enum EmployeRole {
 export enum EmployeTimeStatus {
   ONLINE = 'online',
   OFFLINE = 'offline',
+  LUNCH = 'lunch',
+  ENDLUNCH = 'endlunch'
 }

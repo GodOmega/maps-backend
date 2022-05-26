@@ -17,3 +17,17 @@ export class CreateEnterpriseGroupDto {
 }
 
 export class UpdateEnterpriseGroup extends PartialType(CreateEnterpriseGroupDto) {}
+
+export class AddEmployeeDto {
+  @IsString()
+  @ApiProperty()
+  readonly email: string;
+
+  @IsNumber()
+  @ApiProperty()
+  readonly enterpriseId: number;
+
+  @IsNumber()
+  @ApiProperty()
+  readonly enterpriseGroupId: number;
+}

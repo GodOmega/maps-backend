@@ -18,42 +18,124 @@ export class WorkerService {
     private employeTimeRepo: Repository<EmployeTime>,
   ) {}
 
-  async workerConnected(id: number, clientId: string, roomId: string, name: string) {
+  async workerConnected(
+    id: number,
+    clientId: string,
+    roomId: string,
+    name: string,
+    lastname: string
+  ) {
     const employe = await this.employeRepo.findOne(id);
 
     if (employe) {
-      const response = await this.createWorkerTime({ clientId, employe });
+      const uuid = uuidv4();
+      const response = await this.createWorkerTime({ clientId, employe, uuid });
       const room = this.getRoom(roomId);
 
-      console.log(room)
       if (response) {
         room.workers.push({
-          employe: employe.id,
+          employeeId: employe.id,
           client: clientId,
           name,
-          uuid: uuidv4()
+          lastname,
+          status: 'online',
+          uuid,
         });
       }
 
-      return { room }
+      return { room };
     }
   }
 
-  async workerDisconnected(
-    employeId: number,
-    clientId: string,
-    status: string,
-  ) {
-    const employe = await this.employeRepo.findOne(employeId);
+  async workerDisconnected(clientId: string) {
+    const { room, worker } = this.getRoomByWorker(clientId);
+    let newStatus = null;
+    let newWorkersArray = null;
 
-    if (employe) {
-      await this.createWorkerTime({ clientId, employe, status });
+    if (worker && room) {
+      if (worker.status === 'online') {
+        newWorkersArray = room.workers.filter(
+          (worker) => worker.client !== clientId,
+        );
+        newStatus = 'offline';
+      }
+
+      if (worker.status === 'lunch') {
+        newWorkersArray = room.workers.filter(
+          (worker) => worker.client !== clientId,
+        );
+        newStatus = 'endlunch';
+      }
+
+      const employe = await this.employeRepo.findOne(worker.employeeId);
+      if (employe) {
+        await this.createWorkerTime({
+          clientId,
+          employe,
+          status: newStatus,
+          uuid: worker.uuid,
+        });
+        room.workers = newWorkersArray;
+      }
+    }
+
+    return room;
+  }
+
+  async workerLunch(clientId: string) {
+    const { room, worker } = this.getRoomByWorker(clientId);
+
+    if (room && worker) {
+      const employe = await this.employeRepo.findOne(worker.employeeId);
+
+      if (employe) {
+        const workerIndex = room.workers.findIndex(
+          (element) => element.client === clientId,
+        );
+
+        if (workerIndex >= 0) {
+          await this.createWorkerTime({
+            clientId,
+            employe,
+            status: 'offline',
+            uuid: worker.uuid,
+          });
+
+          room.workers[workerIndex] = {
+            ...worker,
+            status: 'lunch',
+          };
+
+          await this.createWorkerTime({
+            clientId,
+            employe,
+            status: 'lunch',
+            uuid: worker.uuid,
+          });
+        }
+
+        return { room };
+      }
     }
   }
 
   async createWorkerTime(data: any) {
     const newEmployeTime = this.employeTimeRepo.create(data);
     return await this.employeTimeRepo.save(newEmployeTime);
+  }
+
+  getRoomByWorker(clientId: string) {
+    let worker = null;
+
+    const room = this.rooms.find((item) => {
+      const employee = item.workers.find(
+        (worker) => worker.client === clientId,
+      );
+      worker = employee;
+      return employee;
+    });
+
+    return { room, worker };
   }
 
   getRoom(roomId: string) {
@@ -72,8 +154,9 @@ export class WorkerService {
   }
 
   async getClientsOnline(roomId: string) {
-    const room = this.getRoom(roomId)
-    console.log('room', room)
-    return room.workers
+    const room = this.getRoom(roomId);
+    const workers = room.workers.filter((worker) => worker.status === 'online');
+
+    return workers;
   }
 }

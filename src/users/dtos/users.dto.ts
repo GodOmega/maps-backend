@@ -5,6 +5,7 @@ import { USER_GENDER, USER_ROLE } from '../models/user.models';
 
 export class CreateUserDto {
   @IsString()
+  @IsOptional()
   @ApiProperty()
   readonly username: string;
 

@@ -1,12 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, FindCondition, Like } from 'typeorm';
 
 import { Enterprise } from '../entities/enterprise.entity';
-import { EnterpriseGroup } from '../entities/enterpriseGroup.entity';
 import {
   CreateEnterpriseDto,
   UpdateEnterpriseDto,
+  FilterEnterpriseDto
 } from '../dtos/enterprise.dto';
 
 @Injectable()
@@ -14,9 +14,29 @@ export class EnterpriseService {
   constructor(
     @InjectRepository(Enterprise)
     private enterpriseRepo: Repository<Enterprise>,
-    @InjectRepository(EnterpriseGroup)
-    private enterpriseGroupRepo: Repository<EnterpriseGroup>,
   ) {}
+
+  findAll(params?: FilterEnterpriseDto) {
+    
+    if(params) {
+      const where: FindCondition<Enterprise> = {}
+      const { name } = params
+
+      if(name) {
+        where.name = Like(`%${name}%`)
+      }
+
+      return this.enterpriseRepo.find({
+      relations: ['user'],
+      where
+      })
+    }
+
+
+    return this.enterpriseRepo.find({
+      relations: ['user']
+    });
+  }
 
   async findOne(id: number) {
     const enterprise = await this.enterpriseRepo.findOne(id);
@@ -38,5 +58,9 @@ export class EnterpriseService {
 
     this.enterpriseRepo.merge(enterprise, changes);
     return this.enterpriseRepo.save(enterprise);
+  }
+
+  delete(id: number) {
+    return this.enterpriseRepo.delete(id)
   }
 }
