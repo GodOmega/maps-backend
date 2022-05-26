@@ -43,7 +43,7 @@ export class WorkersGateway
   }
 
   @SubscribeMessage('join_work')
-  async handleMessage(client: Socket, payload: any) {
+  async handleJoinWork(client: Socket, payload: any) {
     try {
       const { employeId, group, enterpriseId, name, lastname } = payload;
 
@@ -118,5 +118,10 @@ export class WorkersGateway
     } catch (error) {
       throw new WsException('Ha ocurrido un error en la conexion');
     }
+  }
+
+  @SubscribeMessage('message')
+  async handleMessage(client: Socket, payload) {
+    console.log(payload) 
   }
 }
