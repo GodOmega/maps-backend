@@ -33,11 +33,13 @@ export class GroupsController {
     return this.groupService.getGroupEmployees(groupId);
   }
 
+  @Roles(Role.ADMIN, Role.OWNER)
   @Post()
   createGroup(@Body() payload: CreateEnterpriseGroupDto) {
     return this.groupService.create(payload);
   }
 
+  @Roles(Role.ADMIN, Role.OWNER)
   @Post('/employee')
   addEmployee(@Body() payload: AddEmployeeDto) {
     return this.groupService.addEmployee(payload);
@@ -48,6 +50,7 @@ export class GroupsController {
     return this.groupService.getGroup(groupId);
   }
 
+  @Roles(Role.ADMIN, Role.OWNER)
   @Put(':id')
   updateGroup(
     @Param('id', ParseIntPipe) groupId: number,
@@ -56,6 +59,7 @@ export class GroupsController {
     return this.groupService.updateGroup(groupId, payload);
   }
 
+  @Roles(Role.ADMIN, Role.OWNER)
   @Delete(':id')
   deleteGroup(@Param('id', ParseIntPipe) groupId: number) {
     return this.groupService.delete(groupId);

@@ -30,13 +30,13 @@ import { Role } from '../../auth/models/roles.model';
 export class EnterprisesController {
   constructor(private enterpriseService: EnterpriseService) {}
 
+  @Roles(Role.ADMIN)
   @Get()
   getAll(@Query() params: FilterEnterpriseDto) {
     return this.enterpriseService.findAll(params);
   }
 
-  // @Roles(Role.ADMIN)
-  // @Public()
+  @Roles(Role.ADMIN, Role.OWNER)
   @Get(':id')
   getEnterprise(@Param('id', ParseIntPipe) enterpriseId: number) {
     return this.enterpriseService.findOne(enterpriseId);
@@ -48,6 +48,8 @@ export class EnterprisesController {
     return this.enterpriseService.create(payload);
   }
 
+
+  @Roles(Role.ADMIN, Role.OWNER)
   @Put(':id')
   changeEnterprise(
     @Param('id', ParseIntPipe) enterpriseId: number,
@@ -56,6 +58,7 @@ export class EnterprisesController {
     return this.enterpriseService.update(enterpriseId, payload);
   }
 
+  @Roles(Role.ADMIN)
   @Delete(':id')
   deleteEnterprise(@Param('id', ParseIntPipe) enterpriseId: number) {
     return this.enterpriseService.delete(enterpriseId);

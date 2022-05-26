@@ -12,7 +12,7 @@ import { Server, Socket } from 'socket.io';
 import { WorkerService } from './services/worker.service';
 
 @WebSocketGateway({
-  cors: { origin: '*' },
+  cors: { origin: process.env.SOCKET_DOMAIN || '*' },
 })
 export class WorkersGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
