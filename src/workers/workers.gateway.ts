@@ -123,6 +123,11 @@ export class WorkersGateway
   @SubscribeMessage('message')
   async handleMessage(client: Socket, payload) {
 
-    
+
+  }
+
+  @SubscribeMessage('test')
+  async handleTest(client: Socket, payload) {
+    console.log('test')    
   }
 }
