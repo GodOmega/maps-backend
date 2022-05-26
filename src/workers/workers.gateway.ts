@@ -121,7 +121,5 @@ export class WorkersGateway
   }
 
   @SubscribeMessage('message')
-  async handleMessage(client: Socket, payload) {
-    console.log(payload) 
-  }
+  async handleMessage(client: Socket, payload) {}
 }
