@@ -15,6 +15,7 @@ import {
   CreateEnterpriseDto,
   UpdateEnterpriseDto,
   FilterEnterpriseDto,
+  RemoveEmployee
 } from '../dtos/enterprise.dto';
 
 import { EnterpriseService } from '../services/enterprise.service';
@@ -56,6 +57,12 @@ export class EnterprisesController {
     @Body() payload: UpdateEnterpriseDto,
   ) {
     return this.enterpriseService.update(enterpriseId, payload);
+  }
+
+  @Roles(Role.ADMIN, Role.OWNER)
+  @Put('/remove/employee')
+  removeEmployee(@Body() payload: RemoveEmployee) {
+    return this.enterpriseService.removeEmployee(payload);
   }
 
   @Roles(Role.ADMIN)

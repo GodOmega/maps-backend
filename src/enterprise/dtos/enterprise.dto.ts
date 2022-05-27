@@ -18,3 +18,13 @@ export class FilterEnterpriseDto {
   @ApiProperty()
   readonly name: string;
 }
+
+export class RemoveEmployee {
+  @IsNumber()
+  @ApiProperty()
+  readonly enterpriseId: number;
+
+  @IsNumber()
+  @ApiProperty()
+  readonly employeeId: number;
+}

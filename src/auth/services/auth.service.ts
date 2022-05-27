@@ -19,6 +19,16 @@ export class AuthService {
   ) {}
 
   async registerUser(data: RegisterUserDto) {
+    const oldUser = await this.userRepo.findOne({
+      where: {
+        email: data.email,
+      },
+    });
+
+    if (oldUser) {
+      throw new BadRequestException('Este correo ya se encuentra en uso');
+    }
+
     const user = this.userRepo.create(data);
 
     user.password = await bcrypt.hash(data.password, 10);
