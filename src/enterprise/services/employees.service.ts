@@ -8,6 +8,7 @@ import {
   CreateEmployeeDto,
   UpdateEmployeeDto,
   GetEmployeeTime,
+  GetEmployeesWithTime
 } from '../dtos/employe.dto';
 import { Employe } from '../entities/employe.entity';
 import { EmployeTime } from '../entities/employeTime.entity';
@@ -26,7 +27,7 @@ export class EmployeesService {
     return employee;
   }
 
-  async getEmployeeTime(data: GetEmployeeTime) {
+  async getEmployeeWithTime(data: GetEmployeeTime) {
     const { email, enterpriseId } = data;
 
     const start = moment().startOf('day').toDate();
@@ -157,6 +158,51 @@ export class EmployeesService {
         minutes: lunchTimeMinutes,
       },
     };
+  }
+
+  async getEmployeesWithTime(data: GetEmployeesWithTime) {
+    const { enterpriseId } = data;
+
+    const employees = await this.employeRepo
+      .createQueryBuilder('employee')
+      .leftJoinAndSelect('employee.user', 'user')
+      .where('employee.enterprises_id = :enterpriseId', { enterpriseId })
+      .getMany();
+
+    if (!employees.length) {
+      return employees;
+    }
+
+    let employeesWithTime = [];
+    const start = moment().startOf('day').toDate();
+    const end = moment().endOf('day').toDate();
+
+    for (const employee of employees) {
+      const employeeTimes = await this.employeeTimeRepo
+        .createQueryBuilder('employeeTime')
+        .where('employeeTime.employe_id = :id', { id: employee.id })
+        .andWhere('employeeTime.time BETWEEN :start AND :end', { start, end })
+        .getMany();
+
+      const order = this.orderEmployeeTimes(employeeTimes);
+      const employeeTime = this.calculateEmployeeTime(order);
+
+      const name = employee.user.name;
+      const lastname = employee.user.lastname;
+
+      delete employee.user;
+
+      const employeeWithTime = {
+        employee,
+        name,
+        lastname,
+        employeeTime,
+      };
+
+      employeesWithTime = [...employeesWithTime, employeeWithTime];
+    }
+
+    return employeesWithTime;
   }
 
   create(data: CreateEmployeeDto) {

@@ -12,7 +12,7 @@ import {
 
 import { EmployeesService } from '../services/employees.service';
 
-import { CreateEmployeeDto, UpdateEmployeeDto, GetEmployeeTime } from '../dtos/employe.dto';
+import { CreateEmployeeDto, UpdateEmployeeDto, GetEmployeeTime, GetEmployeesWithTime } from '../dtos/employe.dto';
 
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
@@ -20,15 +20,21 @@ import { Public } from '../../auth/decorators/public.decorator';
 import { Roles } from '../../auth/decorators/roles.decorator';
 import { Role } from '../../auth/models/roles.model';
 
-@UseGuards(JwtAuthGuard, RolesGuard)
+// @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('employees')
 export class EmployeesController {
   constructor(private employeeService: EmployeesService) {}
   
   @Post('/time')
   getEmployeeTime(@Body() payload: GetEmployeeTime) {
-    return this.employeeService.getEmployeeTime(payload);
+    return this.employeeService.getEmployeeWithTime(payload);
   }
+
+  @Post('/times')
+  getEmployees(@Body() payload: GetEmployeesWithTime) {
+    return this.employeeService.getEmployeesWithTime(payload);
+  }
+  
 
   @Get(':id')
   getEmployee(@Param('id', ParseIntPipe) employeeId: number) {

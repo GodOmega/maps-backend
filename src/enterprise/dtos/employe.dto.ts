@@ -1,10 +1,7 @@
 import { IsString, IsNumber, IsOptional } from 'class-validator';
 import { PartialType, ApiProperty } from '@nestjs/swagger';
 
-
 import { EmployeRole } from '../types/employe.type';
-
-
 
 export class CreateEmployeeDto {
   @IsNumber()
@@ -44,6 +41,12 @@ export class GetEmployeeTime {
   @ApiProperty()
   readonly email: string;
 
+  @IsNumber()
+  @ApiProperty()
+  readonly enterpriseId: number;
+}
+
+export class GetEmployeesWithTime {
   @IsNumber()
   @ApiProperty()
   readonly enterpriseId: number;
