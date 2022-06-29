@@ -8,7 +8,8 @@ import {
   CreateEmployeeDto,
   UpdateEmployeeDto,
   GetEmployeeTime,
-  GetEmployeesWithTime
+  GetEmployeesWithTime,
+  GetEmployeeTimeByWeek,
 } from '../dtos/employe.dto';
 import { Employe } from '../entities/employe.entity';
 import { EmployeTime } from '../entities/employeTime.entity';
@@ -203,6 +204,72 @@ export class EmployeesService {
     }
 
     return employeesWithTime;
+  }
+
+  async getEmployeeTimeByMonth(data: GetEmployeeTime) {
+    const { email, enterpriseId} = data;
+    const start = moment().startOf('month').toDate();
+    const end = moment().endOf('month').toDate();
+
+    const employee = await this.employeRepo
+      .createQueryBuilder('employee')
+      .leftJoinAndSelect('employee.user', 'user')
+      .where('employee.enterprises_id = :enterpriseId', { enterpriseId })
+      .andWhere('user.email = :email', { email })
+      .getOne();
+
+    if (!employee) {
+      throw new NotFoundException('Empleado no encontrado');
+    }
+    const employeeTimes = await this.employeeTimeRepo
+      .createQueryBuilder('employeeTime')
+      .where('employeeTime.employe_id = :id', { id: employee.id })
+      .andWhere('employeeTime.time BETWEEN :start AND :end', { start, end })
+      .getMany();
+
+    const order = this.orderEmployeeTimes(employeeTimes);
+    const employeeTime = this.calculateEmployeeTime(order);
+
+    const name = employee.user.name;
+    const lastname = employee.user.lastname;
+
+    delete employee.user;
+
+    return { ...employee, name, lastname, ...employeeTime };
+  }
+
+  async getEmployeeTimeByWeek(data: GetEmployeeTimeByWeek) {
+    const { email, enterpriseId, startDate, endDate} = data;
+    const start = moment(startDate).startOf("day").toDate();
+    const end = moment(endDate).endOf("day").toDate();
+
+    const employee = await this.employeRepo
+      .createQueryBuilder('employee')
+      .leftJoinAndSelect('employee.user', 'user')
+      .where('employee.enterprises_id = :enterpriseId', { enterpriseId })
+      .andWhere('user.email = :email', { email })
+      .getOne();
+
+    if (!employee) {
+      throw new NotFoundException('Empleado no encontrado');
+    }
+    const employeeTimes = await this.employeeTimeRepo
+      .createQueryBuilder('employeeTime')
+      .where('employeeTime.employe_id = :id', { id: employee.id })
+      .andWhere(`employeeTime.time BETWEEN :start AND date_sub(:end , interval 1 HOUR)`, { start, end })
+      .getMany();
+
+
+    const order = this.orderEmployeeTimes(employeeTimes);
+    const employeeTime = this.calculateEmployeeTime(order);  
+
+    const name = employee.user.name;
+    const lastname = employee.user.lastname;
+
+    delete employee.user;
+
+    return { ...employee, name, lastname, ...employeeTime };
+
   }
 
   create(data: CreateEmployeeDto) {

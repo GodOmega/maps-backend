@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsOptional } from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsDate } from 'class-validator';
 import { PartialType, ApiProperty } from '@nestjs/swagger';
 
 import { EmployeRole } from '../types/employe.type';
@@ -50,4 +50,12 @@ export class GetEmployeesWithTime {
   @IsNumber()
   @ApiProperty()
   readonly enterpriseId: number;
+}
+
+export class GetEmployeeTimeByWeek extends GetEmployeeTime{
+  @IsDate()
+  readonly startDate: Date;
+  
+  @IsDate()
+  readonly endDate: Date;
 }

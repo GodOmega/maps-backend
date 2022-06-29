@@ -12,7 +12,7 @@ import {
 
 import { EmployeesService } from '../services/employees.service';
 
-import { CreateEmployeeDto, UpdateEmployeeDto, GetEmployeeTime, GetEmployeesWithTime } from '../dtos/employe.dto';
+import { CreateEmployeeDto, UpdateEmployeeDto, GetEmployeeTime, GetEmployeesWithTime, GetEmployeeTimeByWeek } from '../dtos/employe.dto';
 
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
@@ -33,6 +33,16 @@ export class EmployeesController {
   @Post('/times')
   getEmployees(@Body() payload: GetEmployeesWithTime) {
     return this.employeeService.getEmployeesWithTime(payload);
+  }
+  
+  @Post('/month')
+  getEmployeeTimeByMonth(@Body() payload: GetEmployeeTime) {
+    return this.employeeService.getEmployeeTimeByMonth(payload);
+  }
+
+  @Post('/week')
+  getEmployeeTimeByWeek(@Body() payload: GetEmployeeTimeByWeek) {
+    return this.employeeService.getEmployeeTimeByWeek(payload);
   }
   
 
