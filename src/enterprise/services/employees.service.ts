@@ -83,9 +83,7 @@ export class EmployeesService {
   }
 
   calculateEmployeeTime(timesOrdered: any) {
-    let workTimeHours = 0;
     let workTimeMinutes = 0;
-    let lunchTimeHours = 0;
     let lunchTimeMinutes = 0;
 
     for (const key in timesOrdered) {
@@ -96,17 +94,14 @@ export class EmployeesService {
       let lunch: any = '';
       let endlunch: any = '';
 
-      let timeInHours = 0;
       let timeInMinutes = 0;
 
-      let lunchInHour = 0;
       let lunchInMinutes = 0;
 
       for (const item of timesArray) {
         if (item.status === 'online') {
           onlineDate = moment(item.time);
           if (offlineDate) {
-            timeInHours = offlineDate.diff(onlineDate, 'hour');
             timeInMinutes = offlineDate.diff(onlineDate, 'minutes');
           }
         }
@@ -115,7 +110,6 @@ export class EmployeesService {
           offlineDate = moment(item.time);
 
           if (onlineDate) {
-            timeInHours = offlineDate.diff(onlineDate, 'hour');
             timeInMinutes = offlineDate.diff(onlineDate, 'minutes');
           }
         }
@@ -126,7 +120,6 @@ export class EmployeesService {
           lunch = moment(item.time);
 
           if (endlunch) {
-            lunchInHour = endlunch.diff(lunch, 'hour');
             lunchInMinutes = endlunch.diff(lunch, 'minutes');
           }
         }
@@ -135,29 +128,26 @@ export class EmployeesService {
           endlunch = moment(item.time);
 
           if (lunch) {
-            lunchInHour = endlunch.diff(lunch, 'hour');
             lunchInMinutes = endlunch.diff(lunch, 'minutes');
           }
         }
       }
 
-      workTimeHours += timeInHours;
       workTimeMinutes += timeInMinutes;
 
-      lunchTimeHours += lunchInHour;
       lunchTimeMinutes += lunchInMinutes;
     }
+    
+    const hoursWork = Math.floor(workTimeMinutes / 60);
+    const minutesWork = workTimeMinutes % 60 ;
+    
+
+    const hoursLunch = Math.floor(lunchTimeMinutes / 60);
+    const minutesLunch = lunchTimeMinutes % 60 ;
 
     return {
-      work: {
-        hours: workTimeHours,
-        minutes: workTimeMinutes,
-      },
-
-      lunch: {
-        hours: lunchTimeHours,
-        minutes: lunchTimeMinutes,
-      },
+      workTime: `${hoursWork}h:${minutesWork}m`,
+      lunchTime: `${hoursLunch}h:${minutesLunch}m`
     };
   }
 
