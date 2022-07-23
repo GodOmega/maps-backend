@@ -83,8 +83,8 @@ export class EmployeesService {
   }
 
   calculateEmployeeTime(timesOrdered: any) {
-    let workTimeMinutes = 0;
-    let lunchTimeMinutes = 0;
+    let workTimeSeconds = 0;
+    let lunchTimeSeconds = 0;
 
     for (const key in timesOrdered) {
       const timesArray = timesOrdered[key];
@@ -94,15 +94,15 @@ export class EmployeesService {
       let lunch: any = '';
       let endlunch: any = '';
 
-      let timeInMinutes = 0;
+      let timeInSeconds = 0;
 
-      let lunchInMinutes = 0;
+      let lunchInSeconds = 0;
 
       for (const item of timesArray) {
         if (item.status === 'online') {
           onlineDate = moment(item.time);
           if (offlineDate) {
-            timeInMinutes = offlineDate.diff(onlineDate, 'minutes');
+            timeInSeconds = offlineDate.diff(onlineDate, 'seconds');
           }
         }
 
@@ -110,7 +110,7 @@ export class EmployeesService {
           offlineDate = moment(item.time);
 
           if (onlineDate) {
-            timeInMinutes = offlineDate.diff(onlineDate, 'minutes');
+            timeInSeconds = offlineDate.diff(onlineDate, 'seconds');
           }
         }
 
@@ -120,7 +120,7 @@ export class EmployeesService {
           lunch = moment(item.time);
 
           if (endlunch) {
-            lunchInMinutes = endlunch.diff(lunch, 'minutes');
+            lunchInSeconds = endlunch.diff(lunch, 'seconds');
           }
         }
 
@@ -128,26 +128,29 @@ export class EmployeesService {
           endlunch = moment(item.time);
 
           if (lunch) {
-            lunchInMinutes = endlunch.diff(lunch, 'minutes');
+            lunchInSeconds = endlunch.diff(lunch, 'seconds');
           }
         }
       }
 
-      workTimeMinutes += timeInMinutes;
+      workTimeSeconds += timeInSeconds;
 
-      lunchTimeMinutes += lunchInMinutes;
+      lunchTimeSeconds += lunchInSeconds;
     }
     
-    const hoursWork = Math.floor(workTimeMinutes / 60);
-    const minutesWork = workTimeMinutes % 60 ;
+    const hoursWork = Math.floor(workTimeSeconds / 3600);
+    const minutesWork = Math.floor((workTimeSeconds / 60) % 60);
+    const secondsWork = workTimeSeconds % 60;
     
 
-    const hoursLunch = Math.floor(lunchTimeMinutes / 60);
-    const minutesLunch = lunchTimeMinutes % 60 ;
+    const hoursLunch = Math.floor(lunchTimeSeconds / 3600);
+    const minutesLunch = Math.floor((lunchTimeSeconds / 60) % 60);
+    const secondsLunch = lunchTimeSeconds % 60;
+
 
     return {
-      workTime: `${hoursWork}h:${minutesWork}m`,
-      lunchTime: `${hoursLunch}h:${minutesLunch}m`
+      workTime: `${hoursWork}h:${minutesWork}m:${secondsWork}s`,
+      lunchTime: `${hoursLunch}h:${minutesLunch}m:${secondsLunch}s`
     };
   }
 
